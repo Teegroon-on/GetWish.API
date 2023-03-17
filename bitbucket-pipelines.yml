@@ -1,0 +1,12 @@
+pipelines:
+  default:
+     - step:
+         name: Deploy to production
+         deployment: production
+         script:
+           - echo "Fix rights"
+           - pipe: atlassian/ssh-run:0.4.0
+             variables:
+               SSH_USER: 'developer'
+               SERVER: '65.21.6.21'
+               COMMAND: 'chmod +x /var/www/getwish/deploy.sh && /var/www/getwish/deploy.sh'

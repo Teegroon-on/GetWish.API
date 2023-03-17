@@ -1,0 +1,3382 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "Whish-list api для фронта",
+    "version": "0.1.0",
+    "title": "Whish list"
+  },
+  "host": "wish.dev39.ru",
+  "basePath": "/api/v1",
+  "tags": [
+    {
+      "name": "user",
+      "description": "Операции с пользователями"
+    },
+    {
+      "name": "friend",
+      "description": "Операции с друзьями"
+    },
+    {
+      "name": "wishlist",
+      "description": "Операции со списком желаний"
+    },
+    {
+      "name": "wish",
+      "description": "Операции с желаниями"
+    },
+    {
+      "name": "wishlisttheme",
+      "description": "Операции с темами для вишлистов"
+    },
+    {
+      "name": "post",
+      "description": "Операции с постами"
+    },
+    {
+      "name": "auth",
+      "description": "Сервис авторизации"
+    }
+  ],
+  "schemes": [
+    "https",
+    "http"
+  ],
+  "paths": {
+    "/auth/code/send": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Отсылает код верификации по СМС",
+        "description": "",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+            {
+              "in": "body",
+              "name": "Request body",
+              "description": "Body object",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/SmsCodeSendRequest"
+              }
+            }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sms code was send"
+          },
+          "400": {
+            "description": "Request body validation error.",
+            "schema": {
+              "$ref": "#/definitions/ApiResponseValidationFailed"
+            }
+          },
+          "460": {
+            "description": "Sms code sent to this phone number still active",
+            "schema": {
+              "$ref": "#/definitions/ApiResponseFailed"
+            }
+          },
+          "500": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ApiResponseFailed"
+            }
+          }
+        }
+      }
+    },
+    "/auth/code/check": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Подтверждение проверочного кода",
+        "description": "",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Request body",
+            "description": "Body object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SmsCodeCheckRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Code ok, phone verified",
+            "schema": {
+              "$ref": "#/definitions/SmsCodeCheckResponse"
+            }
+          },
+          "400": {
+            "description": "Request body validation error.",
+            "schema": {
+              "$ref": "#/definitions/ApiResponseValidationFailed"
+            }
+          },
+          "461": {
+            "description": "Sms code expired"
+          },
+          "462": {
+            "description": "Sms code not exists"
+          },
+          "463": {
+            "description": "Sms code already used"
+          }
+        }
+      }
+    },
+    "/auth/token/refresh": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Обновление токена доступа",
+        "description": "",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Request body",
+            "description": "Body object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/TokenRefreshRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tokens succesfully refreshed",
+            "schema": {
+              "$ref": "#/definitions/TokenRefreshResponse"
+            }
+          },
+          "400": {
+            "description": "Request body validation error.",
+            "schema": {
+              "$ref": "#/definitions/ApiResponseValidationFailed"
+            }
+          },
+          "401": {
+            "description": "Refresh token not exists or expired"
+          }
+        }
+      }
+    },
+    "/user": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Get auth user",
+        "operationId": "getUser",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly get auth user",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/user/wishes/reserved": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Get reserved wishes of user",
+        "operationId": "getReservedWishes",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "name": "take",
+            "in": "query",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly get reserved wishes",
+            "schema": {
+              "$ref": "#/definitions/WishGetReservedResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/user/{id}": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Get user",
+        "operationId": "getUserById",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "User that need to be got",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succesfully got",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "400": {
+            "description": "Request body validation error.",
+            "schema": {
+              "$ref": "#/definitions/ApiResponseValidationFailed"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "461": {
+            "description": "User with this username already exists"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Update user",
+        "operationId": "updateUser",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "User that need to be updated",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Updated user object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succesfully updated",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "400": {
+            "description": "Request body validation error.",
+            "schema": {
+              "$ref": "#/definitions/ApiResponseValidationFailed"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "461": {
+            "description": "User with this username already exists"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Delete user",
+        "operationId": "deleteUser",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "User that need to be deleted",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succesfully updated",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/user/by/username/{username}": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Get user",
+        "operationId": "getUserByUsername",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "description": "User that need to be got",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succesfully got",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "400": {
+            "description": "Request body validation error.",
+            "schema": {
+              "$ref": "#/definitions/ApiResponseValidationFailed"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "461": {
+            "description": "User with this username already exists"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/user/{id}/wishlists": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Get wishlists",
+        "operationId": "getWishlistsByUserId",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "User whose wishlist need to be got",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "name": "take",
+            "in": "query",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succesfully got",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "400": {
+            "description": "Request body validation error.",
+            "schema": {
+              "$ref": "#/definitions/ApiResponseValidationFailed"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "461": {
+            "description": "User with this username already exists"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/user/{id}/posts": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Get posts",
+        "operationId": "getPostsByUserId",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "User whose wishlist need to be got",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "name": "take",
+            "in": "query",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succesfully got",
+            "schema": {
+              "$ref": "#/definitions/PostListResponse"
+            }
+          },
+          "400": {
+            "description": "Request body validation error.",
+            "schema": {
+              "$ref": "#/definitions/ApiResponseValidationFailed"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/user/query": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "User search by username",
+        "operationId": "searchUsers",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Request body",
+            "description": "Body object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserSearchRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly get users",
+            "schema": {
+              "$ref": "#/definitions/UserFindResponse"
+            }
+          },
+          "400": {
+            "description": "Request body validation error.",
+            "schema": {
+              "$ref": "#/definitions/ApiResponseValidationFailed"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/user/block": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Block user",
+        "operationId": "blockUser",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Request body",
+            "description": "Body object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/FriendRequestCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly block user",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "461": {
+            "description": "User not exists"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/user/unblock": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Unblock user",
+        "operationId": "unblockUser",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Request body",
+            "description": "Body object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/FriendRequestCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly unblock friend",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "461": {
+            "description": "User not exists"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/user/{id}/updateAvatar": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Update avatar of user",
+        "description": "",
+        "operationId": "updateUserAvatar",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "User that need to be updated",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Updated user object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserUpdateAvatarRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully update avatar",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "400": {
+            "description": "Request body validation error.",
+            "schema": {
+              "$ref": "#/definitions/ApiResponseValidationFailed"
+            }
+          },
+          "462": {
+            "description": "Invalid image format"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/user/logout": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Logs out current logged in user session",
+        "description": "",
+        "operationId": "logoutUser",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Successfully logout"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/user/availability": {
+        "post": {
+          "tags": [
+            "user"
+          ],
+          "summary": "Check availability of username",
+          "description": "",
+          "operationId": "availabilityUser",
+          "produces": [
+            "application/json"
+          ],
+          "parameters": [
+            {
+              "in": "body",
+              "name": "body",
+              "required": true,
+              "schema": {
+                "$ref": "#/definitions/UserAvailabilityRequest"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Username availability"
+            },
+            "400": {
+							"description": "Request body validation error.",
+							"schema": {
+								"$ref": "#/definitions/ApiResponseValidationFailed"
+							}
+						},
+						"401": {
+							"description": "Unauthorized"
+						},
+            "461": {
+              "description": "User with this username already exists"
+            }
+          },
+          "security": [
+            {
+              "bearer": []
+            }
+          ]
+        }
+    },
+    "/user/updatePhone": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Update the phone of the current user using the code",
+        "description": "",
+        "operationId": "updateUserPhone",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserEditPhoneRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfully updated",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "400": {
+            "description": "Request body validation error.",
+            "schema": {
+              "$ref": "#/definitions/ApiResponseValidationFailed"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "461": {
+            "description": "SmsCode expired"
+          },
+          "462": {
+            "description": "SmsCode not exists"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/user/sendCode": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "",
+        "description": "",
+        "operationId": "updateSendCode",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SmsCodeSendRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sms code was send"
+          },
+          "400": {
+            "description": "Request body validation error.",
+            "schema": {
+              "$ref": "#/definitions/ApiResponseValidationFailed"
+            }
+          },
+          "460": {
+            "description": "Sms code sent to this phone number still active",
+            "schema": {
+              "$ref": "#/definitions/ApiResponseFailed"
+            }
+          },
+          "461": {
+            "description": "This phone number is already in use by another user"
+          },
+          "500": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ApiResponseFailed"
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/friend/{id}/reservations/count": {
+      "get": {
+        "tags": [
+          "friend"
+        ],
+        "summary": "Get count of friend reservations",
+        "operationId": "getFriendReservations",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "User id",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succesfully got",
+            "schema": {
+              "$ref": "#/definitions/FriendReservationCountResponse"
+            }
+          },
+          "400": {
+            "description": "Request body validation error.",
+            "schema": {
+              "$ref": "#/definitions/ApiResponseValidationFailed"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "461": {
+            "description": "User with this username already exists"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/friend/query": {
+      "post": {
+        "tags": [
+          "friend"
+        ],
+        "summary": "Friend search by username",
+        "operationId": "searchFriends",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Request body",
+            "description": "Body object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserSearchRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly get users",
+            "schema": {
+              "$ref": "#/definitions/FriendFindResponse"
+            }
+          },
+          "400": {
+            "description": "Request body validation error.",
+            "schema": {
+              "$ref": "#/definitions/ApiResponseValidationFailed"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/friend/request": {
+      "post": {
+        "tags": [
+          "friend"
+        ],
+        "summary": "Create FriendRequest",
+        "operationId": "createFriendRequest",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Request body",
+            "description": "Body object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/FriendRequestCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly get users",
+            "schema": {
+              "$ref": "#/definitions/FriendFindResponse"
+            }
+          },
+          "400": {
+            "description": "Request body validation error.",
+            "schema": {
+              "$ref": "#/definitions/ApiResponseValidationFailed"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "461": {
+            "description": "FriendRequest already exists"
+          },
+          "462": {
+            "description": "Cannot send a friend request to yourself"
+          },
+          "463": {
+            "description": "User not exists"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/friend/request/accept": {
+      "post": {
+        "tags": [
+          "friend"
+        ],
+        "summary": "Accept friend request",
+        "operationId": "acceptFriendRequest",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Request body",
+            "description": "Body object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/FriendRequestCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly accepted friend request",
+            "schema": {
+              "$ref": "#/definitions/FriendRequest"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "461": {
+            "description": "FriendRequest not exists"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/friend/request/cancel": {
+      "post": {
+        "tags": [
+          "friend"
+        ],
+        "summary": "Cancel friend request",
+        "operationId": "cancelFriendRequest",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Request body",
+            "description": "Body object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/FriendRequestCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly canceled friend request",
+            "schema": {
+              "$ref": "#/definitions/FriendRequest"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "461": {
+            "description": "FriendRequest not exists"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/friend/request/outgoing/cancel": {
+      "post": {
+        "tags": [
+          "friend"
+        ],
+        "summary": "Cancel friend request",
+        "operationId": "cancelFriendOutgoingRequest",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Request body",
+            "description": "Body object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/FriendRequestCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly canceled friend request",
+            "schema": {
+              "$ref": "#/definitions/FriendRequest"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "461": {
+            "description": "FriendRequest not exists"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/friend/request/incoming/query": {
+      "post": {
+        "tags": [
+          "friend"
+        ],
+        "summary": "Search incoming friend requests",
+        "operationId": "searchIncomingFriendRequests",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Request body",
+            "description": "Body object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserSearchRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly find friend requests",
+            "schema": {
+              "$ref": "#/definitions/FriendRequestFindResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "461": {
+            "description": "FriendRequest not exists"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/friend/request/outgoing/query": {
+      "post": {
+        "tags": [
+          "friend"
+        ],
+        "summary": "Search outgoing friend requests",
+        "operationId": "searchOutgoingFriendRequests",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Request body",
+            "description": "Body object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UserSearchRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly find friend requests",
+            "schema": {
+              "$ref": "#/definitions/FriendRequestFindResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "461": {
+            "description": "FriendRequest not exists"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/friend": {
+      "delete": {
+        "tags": [
+          "friend"
+        ],
+        "summary": "Delete friend",
+        "operationId": "deleteFriend",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Request body",
+            "description": "Body object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/FriendRequestCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly delete friend",
+            "schema": {
+              "$ref": "#/definitions/User"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "461": {
+            "description": "Friend not exists"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/wishlisttheme": {
+      "get": {
+        "tags": [
+          "wishlisttheme"
+        ],
+        "summary": "Get theme of wishlist",
+        "operationId": "getWishlistTheme",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly get theme of wishlist",
+            "schema": {
+              "$ref": "#/definitions/WishlistThemeFindResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "wishlisttheme"
+        ],
+        "summary": "Create theme of wishlist",
+        "operationId": "createWishlistTheme",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Request body",
+            "description": "Body object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WishlistThemeCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly create theme of wishlis",
+            "schema": {
+              "$ref": "#/definitions/WishlistTheme"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/wishlisttheme/{id}": {
+      "put": {
+        "tags": [
+          "wishlisttheme"
+        ],
+        "summary": "Update theme of wishlist",
+        "operationId": "updateWishlistTheme",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Wishlist theme that need to be updated",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Request body",
+            "description": "Body object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WishlistThemeCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly update theme of wishlist",
+            "schema": {
+              "$ref": "#/definitions/WishlistThemeFindResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/wishlist": {
+      "post": {
+        "tags": [
+          "wishlist"
+        ],
+        "summary": "Create wishlist",
+        "operationId": "createWishlist",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Request body",
+            "description": "Body object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WishlistCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly create wishlist",
+            "schema": {
+              "$ref": "#/definitions/Wishlist"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/wishlist/filter/my": {
+      "post": {
+        "tags": [
+          "wishlist"
+        ],
+        "summary": "Filter my wishlists",
+        "operationId": "filterMyWishlists",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Request body",
+            "description": "Body object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WishlistFindRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly find wishlists",
+            "schema": {
+              "$ref": "#/definitions/WishlistFindResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/wishlist/my": {
+      "get": {
+        "tags": [
+          "wishlist"
+        ],
+        "summary": "Get my wishlists",
+        "operationId": "getMyWishlists",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly get wishlists",
+            "schema": {
+              "$ref": "#/definitions/WishlistShortResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/wishlist/{id}": {
+      "get": {
+        "tags": [
+          "wishlist"
+        ],
+        "summary": "Get wishlist",
+        "operationId": "getWishlist",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Wishlist that need to be updated",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly delete wishlist",
+            "schema": {
+              "$ref": "#/definitions/Wishlist"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "wishlist"
+        ],
+        "summary": "Update wishlist",
+        "operationId": "updateWishlist",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Wishlist that need to be updated",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Request body",
+            "description": "Body object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WishlistUpdateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly create wishlist",
+            "schema": {
+              "$ref": "#/definitions/Wishlist"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "wishlist"
+        ],
+        "summary": "Delete wishlist",
+        "operationId": "deleteWishlist",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Wishlist that need to be updated",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly delete wishlist",
+            "schema": {
+              "$ref": "#/definitions/Wishlist"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/wish": {
+      "post": {
+        "tags": [
+          "wish"
+        ],
+        "summary": "Create wish",
+        "operationId": "createWish",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Request body",
+            "description": "Body object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WishCreateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly create wish",
+            "schema": {
+              "$ref": "#/definitions/Wishlist"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/wish/{id}": {
+      "get": {
+        "tags": [
+          "wish"
+        ],
+        "summary": "Get wish",
+        "operationId": "getWish",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Wish that need to be updated",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly get wish",
+            "schema": {
+              "$ref": "#/definitions/Wishlist"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "wish"
+        ],
+        "summary": "Update wish",
+        "operationId": "updateWish",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Wish that need to be updated",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Request body",
+            "description": "Body object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WishUpdateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly create wish",
+            "schema": {
+              "$ref": "#/definitions/Wishlist"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "wish"
+        ],
+        "summary": "Delete wish",
+        "operationId": "deleteWish",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Wish that need to be deleted",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly delete wish",
+            "schema": {
+              "$ref": "#/definitions/Wishlist"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/wish/{id}/reserve": {
+      "post": {
+        "tags": [
+          "wish"
+        ],
+        "summary": "Create reservation of wish",
+        "operationId": "createWishReservation",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Wish that will be reserved",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Request body",
+            "description": "Body object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/WishCreateReservationRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly create wish",
+            "schema": {
+              "$ref": "#/definitions/Wishlist"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "wish"
+        ],
+        "summary": "Delete reservation of wish",
+        "operationId": "deleteWishlist",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Wish that need to be deleted",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly delete wish",
+            "schema": {
+              "$ref": "#/definitions/Wishlist"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/post/list": {
+      "get": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Get list of posts",
+        "operationId": "getListPosts",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly",
+            "schema": {
+              "$ref": "#/definitions/PostListResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/post/{id}/likes": {
+      "get": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Likes of post",
+        "operationId": "postLikesList",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Post id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "name": "take",
+            "in": "query",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly update post",
+            "schema": {
+              "$ref": "#/definitions/PostLikeListResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/post/{id}/comments": {
+      "get": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Comments of post",
+        "operationId": "commentPostsList",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Post that need to be liked",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "name": "take",
+            "in": "query",
+            "required": false,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly update post",
+            "schema": {
+              "$ref": "#/definitions/PostCommentListResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/post/{id}": {
+      "get": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Get post",
+        "operationId": "getPost",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Post that need to be got",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly get post",
+            "schema": {
+              "$ref": "#/definitions/Post"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Update post",
+        "operationId": "updatePost",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Post that need to be updated",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Request body",
+            "description": "Body object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PostUpdateRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly update post",
+            "schema": {
+              "$ref": "#/definitions/Post"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Delete post",
+        "operationId": "deletePost",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Post that need to be deleted",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly delete post",
+            "schema": {
+              "$ref": "#/definitions/ShortPost"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/post/{id}/like": {
+      "post": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Like a post",
+        "operationId": "likePost",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Post that need to be liked",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly update post"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/post/{id}/unlike": {
+      "post": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Unlike a post",
+        "operationId": "unlikePost",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Post that need to be unliked",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly update post"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/post/{id}/comment": {
+      "post": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Create a comment of post",
+        "operationId": "createPostComment",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Post id",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Request body",
+            "description": "Body object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PostCommentRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly create post"
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/post/attachment/upload": {
+      "post": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Upload post attachment",
+        "operationId": "uploadPostAttachment",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "id",
+            "description": "Оставить пустым, если не требуется добавления к нужному посту",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "in": "formData",
+            "name": "file",
+            "description": "Upload file",
+            "required": true,
+            "type": "file"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly upload attachment of post",
+            "schema": {
+              "$ref": "#/definitions/ShortPost"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    },
+    "/post/comment/{id}": {
+      "put": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Update comment of post",
+        "operationId": "updatePostComment",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "PostComment that need to be updated",
+            "required": true,
+            "type": "integer"
+          },
+          {
+            "in": "body",
+            "name": "Request body",
+            "description": "Body object",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PostCommentRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly update comment of post",
+            "schema": {
+              "$ref": "#/definitions/PostComment"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Delete comment of post",
+        "operationId": "deletePostComment",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Comment of post that need to be deleted",
+            "required": true,
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successfuly delete comment of post",
+            "schema": {
+              "$ref": "#/definitions/PostComment"
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not found"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ]
+      }
+    }
+  },
+  "securityDefinitions": {
+    "bearer": {
+      "scheme": "bearer",
+      "type": "apiKey",
+      "description": "Введите в текстовое поле: 'Bearer {your access_token}'.",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "definitions": {
+    "SmsCodeCheckRequest": {
+      "type": "object",
+      "properties": {
+        "phone": {
+          "type": "string",
+          "default": "+79991234567"
+        },
+        "code": {
+          "type": "string",
+          "default": "1234"
+        }
+      },
+      "xml": {
+        "name": "SmsCodeCheckRequest"
+      }
+    },
+    "SmsCodeSendRequest": {
+      "type": "object",
+      "properties": {
+        "phone": {
+          "type": "string",
+          "default": "+79991234567"
+        }
+      },
+      "xml": {
+        "name": "SmsCodeSendRequest"
+      }
+    },
+    "TokenRefreshRequest": {
+      "type": "object",
+      "properties": {
+        "refresh_token": {
+          "type": "string",
+          "default": "jcwnlimtmciaxxdlypoo5d51ewfzcbljqaoysgaselthjfu5tuy2ppfc4t93xrbn"
+        }
+      },
+      "xml": {
+        "name": "TokenRefreshRequest"
+      }
+    },
+    "UserAvailabilityRequest": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "default": "example_username"
+        }
+      },
+      "xml": {
+        "name": "UserAvailabilityRequest"
+      }
+    },
+    "UserUpdateAvatarRequest": {
+      "type": "object",
+      "properties": {
+        "avatar": {
+          "type": "string",
+          "default": "base64 encode image"
+        }
+      },
+      "xml": {
+        "name": "UserUpdateAvatarRequest"
+      }
+    },
+    "UserEditPhoneRequest": {
+      "type": "object",
+      "properties": {
+        "phone": {
+          "type": "string",
+          "default": "+79991234567"
+        },
+        "code": {
+          "type": "string",
+          "default": "1234"
+        }
+      },
+      "xml": {
+        "name": "SmsCodeCheckRequest"
+      }
+    },
+    "UserSearchRequest": {
+      "type": "object",
+      "properties": {
+        "username": {
+          "type": "string",
+          "default": "test"
+        },
+        "take": {
+          "type": "integer",
+          "default": 5
+        },
+        "skip": {
+          "type": "integer",
+          "default": 0
+        }
+      },
+      "xml": {
+        "name": "SmsCodeSendRequest"
+      }
+    },
+    "WishlistGetByUserRequest": {
+      "type": "object",
+      "properties": {
+        "take": {
+          "type": "integer",
+          "default": 5
+        },
+        "skip": {
+          "type": "integer",
+          "default": 0
+        }
+      },
+      "xml": {
+        "name": "WishlistGetByUserRequest"
+      }
+    },
+    "SmsCodeCheckResponse": {
+      "type": "object",
+      "properties": {
+        "refresh_token": {
+          "type": "string",
+          "default": "jcwnlimtmciaxxdlypoo5d51ewfzcbljqaoysgaselthjfu5tuy2ppfc4t93xrbn"
+        },
+        "access_token": {
+          "type": "string",
+          "default": "5|ObXZ901DUbILDI9qaYPd5w8uEaqjSzg5iwkoEHD"
+        }
+      },
+      "xml": {
+        "name": "SmsCodeCheckResponse"
+      }
+    },
+    "TokenRefreshResponse": {
+      "type": "object",
+      "properties": {
+        "refresh_token": {
+          "type": "string",
+          "default": "jcwnlimtmciaxxdlypoo5d51ewfzcbljqaoysgaselthjfu5tuy2ppfc4t93xrbn"
+        },
+        "access_token": {
+          "type": "string",
+          "default": "5|ObXZ901DUbILDI9qaYPd5w8uEaqjSzg5iwkoEHD"
+        }
+      },
+      "xml": {
+        "name": "TokenRefreshResponse"
+      }
+    },
+    "UserFindResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/User"
+          }
+        }
+      },
+      "xml": {
+        "name": "UserFindResponse"
+      }
+    },
+    "WishlistThemeFindResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/WishlistTheme"
+          }
+        }
+      },
+      "xml": {
+        "name": "WishlistThemeFindResponse"
+      }
+    },
+    "WishGetReservedResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/WishWishUser"
+          }
+        }
+      },
+      "xml": {
+        "name": "WishGetReservedResponse"
+      }
+    },
+    "WishlistFindRequest": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "number",
+          "description": "1 - публичные, 2 - приватные, 3 - архивные",
+          "default": 1
+        },
+        "skip": {
+          "type": "number",
+          "default": 0
+        },
+        "take": {
+          "type": "number",
+          "default": 0
+        }
+      },
+      "xml": {
+        "name": "WishlistFindRequest"
+      }
+    },
+    "WishlistFindResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Wishlist"
+          }
+        }
+      },
+      "xml": {
+        "name": "WishlistFindResponse"
+      }
+    },
+    "WishlistShortResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/WishlistShort"
+          }
+        }
+      },
+      "xml": {
+        "name": "WishlistShortResponse"
+      }
+    },
+    "FriendFindResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/User"
+          }
+        }
+      },
+      "xml": {
+        "name": "FriendFindResponse"
+      }
+    },
+    "FriendRequestFindResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/FriendRequest"
+          }
+        }
+      },
+      "xml": {
+        "name": "FriendRequestFindResponse"
+      }
+    },
+    "FriendReservationCountResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "object",
+          "default": {
+            "count": 0
+          }
+        }
+      },
+      "xml": {
+        "name": "FriendReservationCountResponse"
+      }
+    },
+    "PostListResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Post"
+          }
+        }
+      },
+      "xml": {
+        "name": "PostListResponse"
+      }
+    },
+    "PostLikeListResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "user": {
+                "type": "object",
+                "$ref": "#/definitions/UserLike"
+              }
+            }
+          }
+        }
+      },
+      "xml": {
+        "name": "PostLikeListResponse"
+      }
+    },
+    "PostCommentListResponse": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/PostComment"
+          }
+        }
+      },
+      "xml": {
+        "name": "PostCommentListResponse"
+      }
+    },
+    "PostUpdateRequest": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        }
+      },
+      "xml": {
+        "name": "PostUpdateRequest"
+      }
+    },
+    "PostCommentRequest": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        }
+      },
+      "xml": {
+        "name": "PostCommentRequest"
+      }
+    },
+    "PostUploadAttachmentRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "default": null
+        }
+      },
+      "xml": {
+        "name": "PostUploadAttachmentRequest"
+      }
+    },
+    "FriendRequestCreateRequest": {
+      "type": "object",
+      "properties": {
+        "user_id": {
+          "type": "number",
+          "default": 10
+        }
+      },
+      "xml": {
+        "name": "FriendRequestCreateRequest"
+      }
+    },
+    "WishlistThemeCreateRequest": {
+      "type": "object",
+      "properties": {
+        "image": {
+          "type": "string",
+          "default": null
+        },
+        "icon": {
+          "type": "string",
+          "default": null
+        },
+        "symbol": {
+          "type": "string",
+          "default": null
+        },
+        "preview": {
+          "type": "string"
+        },
+        "card": {
+          "type": "string"
+        }
+      },
+      "xml": {
+        "name": "WishlistThemeCreateRequest"
+      }
+    },
+    "WishlistCreateRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "default": "Мой вишлист"
+        },
+        "theme": {
+          "type": "integer",
+          "default": 1
+        },
+        "private": {
+          "type": "boolean",
+          "default": false
+        },
+        "friends": {
+          "type": "array",
+          "default": []
+        }
+      },
+      "xml": {
+        "name": "WishlistCreateRequest"
+      }
+    },
+    "WishlistUpdateRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "default": "Мой вишлист"
+        },
+        "theme": {
+          "type": "integer",
+          "default": 1
+        },
+        "is_archive": {
+          "type": "boolean",
+          "default": false
+        },
+        "private": {
+          "type": "boolean",
+          "default": false
+        },
+        "friends": {
+          "type": "array",
+          "default": []
+        }
+      },
+      "xml": {
+        "name": "WishlistUpdateRequest"
+      }
+    },
+    "WishCreateRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "default": "Новое желание"
+        },
+        "description": {
+          "type": "string",
+          "default": "Описание желания"
+        },
+        "link": {
+          "type": "string",
+          "default": "Ссылка на желание"
+        },
+        "wishlist": {
+          "type": "integer",
+          "default": 1
+        },
+        "images": {
+          "type": "array",
+          "default": []
+        }
+      },
+      "xml": {
+        "name": "WishCreateRequest"
+      }
+    },
+    "WishCreateReservationRequest": {
+      "type": "object",
+      "properties": {
+        "anon": {
+          "type": "boolean",
+          "description": "Является ли бронь анонимная",
+          "default": false
+        }
+      },
+      "xml": {
+        "name": "WishCreateReservationRequest"
+      }
+    },
+    "WishUpdateRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "default": "Новое желание"
+        },
+        "description": {
+          "type": "string",
+          "default": "Описание желания"
+        },
+        "link": {
+          "type": "string",
+          "default": "Ссылка на желание"
+        },
+        "wishlist": {
+          "type": "integer",
+          "default": 1
+        },
+        "deleteImages": {
+          "type": "array",
+          "description": "Может быть null",
+          "default": []
+        },
+        "addImages": {
+          "type": "array",
+          "description": "Может быть null",
+          "default": []
+        }
+      },
+      "xml": {
+        "name": "WishUpdateRequest"
+      }
+    },
+    "WishWishUser": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "link": {
+          "type": "string"
+        },
+        "image": {
+          "type": "string"
+        },
+        "user": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "avatar": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "User": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "username": {
+          "type": "string"
+        },
+        "phone": {
+          "type": "string"
+        },
+        "firstname": {
+          "type": "string",
+          "default": "Иван"
+        },
+        "secondname": {
+          "type": "string",
+          "default": "Иванов"
+        },
+        "birthdate": {
+          "type": "string",
+          "default": "1970-01-01"
+        },
+        "avatar": {
+          "description": "Ссылка на аватар или null, если отсутствует",
+          "type": "string",
+          "default": null
+        },
+        "private": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "xml": {
+        "name": "User"
+      }
+    },
+    "WishlistTheme": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "icon": {
+          "type": "string"
+        },
+        "image": {
+          "type": "string"
+        },
+        "card": {
+          "type": "string"
+        },
+        "preview": {
+          "type": "string"
+        },
+        "symbol": {
+          "type": "string",
+          "default": "*"
+        }
+      },
+      "xml": {
+        "name": "Wishlist"
+      }
+    },
+    "Wishlist": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "default": "Мой вишлист",
+          "type": "string"
+        },
+        "private": {
+          "type": "boolean"
+        },
+        "is_archive": {
+          "type": "boolean"
+        },
+        "theme": {
+          "type": "object",
+          "$ref": "#/definitions/WishlistTheme"
+        },
+        "friends": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/User"
+          }
+        }
+      },
+      "xml": {
+        "name": "Wishlist"
+      }
+    },
+    "WishlistShort": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "name": {
+          "default": "Мой вишлист",
+          "type": "string"
+        },
+        "symbol": {
+          "default": "Символ темы вишлиста",
+          "type": "string"
+        }
+      },
+      "xml": {
+        "name": "WishlistShort"
+      }
+    },
+    "Slug": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "slug": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "locale": {
+          "type": "string"
+        },
+        "is_active": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Friend": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "user_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "user_friend_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "blocked": {
+          "type": "boolean",
+          "default": false
+        },
+        "friend": {
+          "$ref": "#/definitions/User"
+        }
+      }
+    },
+    "FriendRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "user_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "user_friend_id": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "friend": {
+          "$ref": "#/definitions/User"
+        }
+      }
+    },
+    "Theme": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "example": 1
+        },
+        "name": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "description": "json объект с темой"
+        },
+        "style": {
+          "type": "string"
+        },
+        "is_arhived": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Chat": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "example": 10
+        },
+        "name": {
+          "type": "string"
+        },
+        "unread_count": {
+          "type": "integer"
+        }
+      }
+    },
+    "NewMessage": {
+      "type": "object",
+      "properties": {
+        "text": {
+          "type": "string"
+        }
+      }
+    },
+    "Message": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int64",
+          "example": 10
+        },
+        "user_id": {
+          "type": "integer",
+          "format": "int64",
+          "example": 10
+        },
+        "text": {
+          "type": "string"
+        },
+        "is_unread": {
+          "type": "boolean"
+        },
+        "created_at": {
+          "type": "integer"
+        },
+        "updated_at": {
+          "type": "integer"
+        }
+      }
+    },
+    "Post": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "text": {
+          "type": "string",
+          "default": null
+        },
+        "attachments": {
+          "type": "array",
+          "default": ["link", "link"]
+        },
+        "likes": {
+          "type": "object",
+          "$ref": "#/definitions/PostLikes"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      }
+    },
+    "PostComment": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "text": {
+          "type": "string",
+          "default": null
+        },
+        "user": {
+          "type": "object",
+          "$ref": "#/definitions/UserLike"
+        },
+        "created_at": {
+          "type": "string"
+        },
+        "updated_at": {
+          "type": "string"
+        }
+      }
+    },
+    "UserLike": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        },
+        "username": {
+          "type": "string",
+          "default": null
+        },
+        "avatar": {
+          "type": "string",
+          "default": null
+        }
+      }
+    },
+    "PostLikes": {
+      "type": "object",
+      "properties": {
+        "count": {
+          "type": "integer",
+          "default": 1
+        },
+        "previews": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/UserLike"
+          }
+        }
+      }
+    },
+    "ShortPost": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer"
+        }
+      }
+    },
+    "ApiResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "type": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "ApiResponseFailed": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string",
+          "example": "Not found exception"
+        },
+        "code": {
+          "type": "integer",
+          "format": "int32",
+          "example": 404
+        }
+      }
+    },
+    "ApiResponseValidationFailed": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "The given data was invalid."
+          },
+          "errors": {
+            "type": "object"
+          }
+        }
+    }
+  }
+}
