@@ -145,8 +145,8 @@ class UserController extends Controller
         if (is_null($request->avatar)) {
             $user->deleteAvatar();
         } else {
-            return response() -> json("huy");
             $avatar = $user->setAvatarFromBase64($request->avatar);
+            return response() -> json("huy");
             if (is_null($avatar)) {
                 return response()->json('Invalid image format', 462);
             }
