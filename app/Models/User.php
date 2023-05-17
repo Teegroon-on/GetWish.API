@@ -155,7 +155,7 @@ class User extends Authenticatable implements HasMedia
     public function setAvatarFromBase64(string $base64Image): Media {
         try {
             $this->deleteAvatar();
-            return response() -> json('huy');
+            return 'huy';
             return $this->addMediaFromBase64($base64Image)->toMediaCollection('avatars');
         } catch (FileCannotBeAdded $throw) {
             return null;
