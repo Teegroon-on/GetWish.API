@@ -138,7 +138,6 @@ class UserController extends Controller
      */
     public function updateAvatar(UserUpdateAvatarRequest $request, string $id) {
         $user = $request->user();
-        return response() -> json($user);
         $id = intval($id);
         if (!$id || $user->id !== $id) {
             return response()->json('', 403);
@@ -146,6 +145,7 @@ class UserController extends Controller
         if (is_null($request->avatar)) {
             $user->deleteAvatar();
         } else {
+            return response() -> json("huy");
             $avatar = $user->setAvatarFromBase64($request->avatar);
             if (is_null($avatar)) {
                 return response()->json('Invalid image format', 462);
