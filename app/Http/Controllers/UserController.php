@@ -138,6 +138,7 @@ class UserController extends Controller
      */
     public function updateAvatar(UserUpdateAvatarRequest $request, string $id) {
         $user = $request->user();
+        return response() -> json($user);
         $id = intval($id);
         if (!$id || $user->id !== $id) {
             return response()->json('', 403);
