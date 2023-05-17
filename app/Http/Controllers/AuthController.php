@@ -20,7 +20,7 @@ class AuthController extends Controller
      *
      */
     public function send(SmsCodeSendRequest $request, SmsAeroApi $sms) {
-        return reponse() -> json("huy");
+        return response() -> json("huy");
         $validDate = now()->subMinute();
         $smsCode = SmsCode::where('phone', $request->phone)
             ->where('used', false)
