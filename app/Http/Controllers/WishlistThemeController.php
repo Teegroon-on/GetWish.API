@@ -66,7 +66,6 @@ class WishlistThemeController extends Controller
      * @return JsonResponse|JsonResource
      */
     public function update(WishlistThemeUpdateRequest $request, string $id) {
-        return response() -> json('huy');
         $theme = WishlistTheme::find(intval($id));
         if (is_null($theme)) {
             return response()->json('Theme not found', 461);
