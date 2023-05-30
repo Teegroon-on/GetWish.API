@@ -101,8 +101,6 @@ class PostController extends Controller
     public function uploadAttachment(PostUploadAttachmentRequest $request) {
         $user = $request->user();
         $id = $request->input('id');
-        $response = [];
-        $response['id'] = 'asdas';
         if (is_null($id) || empty($id)) {
             $newPost = new Post();
             $newPost->user()->associate($user);
@@ -117,7 +115,6 @@ class PostController extends Controller
             }
             return new PostUploadAttachmentResource($newPost);
         } else {
-            return response() -> json($response);
             $post = Post::find(intval($id));
             if (is_null($post)) {
                 return response()->json('Not found', 404);
