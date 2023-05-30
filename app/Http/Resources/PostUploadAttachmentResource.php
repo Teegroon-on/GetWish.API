@@ -14,6 +14,7 @@ class PostUploadAttachmentResource extends JsonResource
      */
     public function toArray($request)
     {
+        return 'huy';
         $response = [];
         $response['id'] = $this->id;
         return $response;
