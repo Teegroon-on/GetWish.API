@@ -41,7 +41,7 @@ class SmsCodeCheckRequest extends FormRequest
     public function rules()
     {
         return [
-            'phone' => 'required|string|regex:/^\+7(\d{3})(\d{7})$/',
+            'phone' => 'required|string',
             'code' => 'required|string|size:4',
         ];
     }
