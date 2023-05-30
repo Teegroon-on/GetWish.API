@@ -25,6 +25,7 @@ class AuthController extends Controller
             ->where('used', false)
             ->where('created_at', '>=', $validDate)
             ->first();
+        $res = null;
         if ($smsCode) {
             return response()->json('', 460);
         }
