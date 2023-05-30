@@ -25,7 +25,6 @@ class AuthController extends Controller
             ->where('used', false)
             ->where('created_at', '>=', $validDate)
             ->first();
-        $res = null;
         if ($smsCode) {
             return response()->json('', 460);
         }
@@ -36,9 +35,17 @@ class AuthController extends Controller
             $smsCode->code = '1234';
         } else {
             $smsCode->code = $generatedCode;
-            $res = $sms-> send($request->phone, 'Ваш код для входа: '.$generatedCode);
+
+            $aeroLogin = config( 'SMSAERO_LOGIN' );
+            $aeroKey = config( 'SMSAERO_APIKEY' );
+            return response() -> json($aeroKey);
+            $url = "https://{$aeroLogin}:{$aeroKey}@gate.smsaero.ru/v2/sms/send?number={$to}&text={$sms}&sign=SMS Aero&channel=DIRECT";
+            $output = file_get_contents( $url );
+            $output = json_decode( $output , 1 );
+            file_put_contents( env( 'LOG_PATH' ) . '/sms_aero' , json_encode(['output'=>$output,'url' => $url,'to'=>$to]).PHP_EOL,FILE_APPEND);
+
+            $sms-> send($request->phone, 'Ваш код для входа: '.$generatedCode);
         }
-        return response() -> json($res, 200);
         $smsCode->save();
         return response()->json('', 200);
     }
