@@ -96,7 +96,7 @@ class PostController extends Controller
      * Upload attachment of post.
      *
      * @param  App\Http\Requests\Post\PostUploadAttachment  $request
-     * @return PostUploadAttachmentResource
+     * @return JsonResponse|JsonResource
      */
     public function uploadAttachment(PostUploadAttachmentRequest $request) {
         $user = $request->user();
