@@ -35,10 +35,10 @@ class AuthController extends Controller
             $smsCode->code = '1234';
         } else {
             $smsCode->code = $generatedCode;
-            return response() -> json('asdsad', 200);
             $sms->send($request->phone, 'Ваш код для входа: '.$generatedCode);
         }
         $smsCode->save();
+        return response() -> json('asdsad', 200);
         return response()->json('', 200);
     }
 
