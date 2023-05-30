@@ -16,7 +16,6 @@ class PostUploadAttachmentResource extends JsonResource
     {
         $response = [];
         $response['id'] = $this->id;
-        return 'huy';
         return $response;
     }
 }

@@ -115,6 +115,7 @@ class PostController extends Controller
             }
             return new PostUploadAttachmentResource($newPost);
         } else {
+            return response() -> json('sdasd');
             $post = Post::find(intval($id));
             if (is_null($post)) {
                 return response()->json('Not found', 404);
