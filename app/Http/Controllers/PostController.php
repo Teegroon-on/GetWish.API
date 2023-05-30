@@ -110,10 +110,10 @@ class PostController extends Controller
                 return response()->json('This file has unreadable extension', 462);
             }
             if (is_null($newPost->uploadAttachment('file', $ext))) {
-                return response() -> json('huy');
                 $newPost->delete();
                 return response()->json('This file cannot be added', 461);
             }
+            return response() -> json('huy');
             return new PostUploadAttachmentResource($newPost);
         } else {
             $post = Post::find(intval($id));
