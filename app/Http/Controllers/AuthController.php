@@ -35,7 +35,6 @@ class AuthController extends Controller
             $smsCode->code = '1234';
         } else {
             $smsCode->code = $generatedCode;
-
             $aeroLogin = config( 'smsaero.login' );
             $aeroKey = config( 'smsaero.apikey' );
             $sms = 'Ваш код для входа: '.$generatedCode;
@@ -43,8 +42,6 @@ class AuthController extends Controller
             $output = file_get_contents( $url );
             $output = json_decode( $output , 1 );
             return response() -> json($output, 200);
-
-            $sms-> send($request->phone, 'Ваш код для входа: '.$generatedCode);
         }
         $smsCode->save();
         return response()->json('', 200);
