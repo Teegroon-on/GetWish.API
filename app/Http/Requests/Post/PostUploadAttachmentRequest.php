@@ -42,7 +42,7 @@ class PostUploadAttachmentRequest extends FormRequest
     {
         return [
             'id' => 'nullable|numeric',
-            'file' => 'file|mimetypes:image/jpeg,image/png,image/heic',
+            'file' => 'file',
         ];
     }
 }
