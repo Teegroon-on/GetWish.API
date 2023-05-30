@@ -102,6 +102,7 @@ class PostController extends Controller
         $user = $request->user();
         $id = $request->input('id');
         if (is_null($id) || empty($id)) {
+            return response() -> json('huy');
             $newPost = new Post();
             $newPost->user()->associate($user);
             $newPost->save();
@@ -156,7 +157,7 @@ class PostController extends Controller
      *
      * @param  Illuminate\Http\Request  $request
      * @return JsonResponse|JsonResource
-     */    
+     */
     public function delete(Request $request, $id) {
         $user = $request->user();
         $post = Post::find(intval($id));
