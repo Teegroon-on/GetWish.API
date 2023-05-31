@@ -99,6 +99,7 @@ class PostController extends Controller
      * @return JsonResponse|JsonResource
      */
     public function uploadAttachment(PostUploadAttachmentRequest $request) {
+        return response() -> json('asdasd');
         $user = $request->user();
         $id = $request->input('id');
         if (is_null($id) || empty($id)) {
@@ -113,7 +114,6 @@ class PostController extends Controller
                 $newPost->delete();
                 return response()->json('This file cannot be added', 461);
             }
-            return response() -> json($newPost);
             return new PostUploadAttachmentResource($newPost);
         } else {
             $post = Post::find(intval($id));
