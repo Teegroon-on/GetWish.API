@@ -113,6 +113,7 @@ class PostController extends Controller
                 $newPost->delete();
                 return response()->json('This file cannot be added', 461);
             }
+            return response() -> json($newPost);
             return new PostUploadAttachmentResource($newPost);
         } else {
             $post = Post::find(intval($id));
