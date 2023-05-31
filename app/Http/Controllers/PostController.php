@@ -106,7 +106,6 @@ class PostController extends Controller
             $newPost->user()->associate($user);
             $newPost->save();
             $ext = $this->getFileExtension($request->file('file'));
-            return response() -> json($ext);
             if (is_null($ext)) {
                 return response()->json('This file has unreadable extension', 462);
             }
