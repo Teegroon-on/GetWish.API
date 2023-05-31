@@ -98,7 +98,7 @@ class PostController extends Controller
      * @param  App\Http\Requests\Post\PostUploadAttachment  $request
      * @return JsonResponse|JsonResource
      */
-    public function uploadAttachment(PostUploadAttachmentRequest $request) {
+    public function uploadAttachment(Reqeust $request) {
         $user = $request->user();
         $id = $request->input('id');
         if (is_null($id) || empty($id)) {
