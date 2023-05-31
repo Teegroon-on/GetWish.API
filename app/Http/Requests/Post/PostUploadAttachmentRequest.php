@@ -41,8 +41,7 @@ class PostUploadAttachmentRequest extends FormRequest
     public function rules()
     {
         return [
-            'id' => 'nullable|numeric',
-            'file' => 'file',
+
         ];
     }
 }
