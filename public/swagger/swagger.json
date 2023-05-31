@@ -5,7 +5,7 @@
     "version": "0.1.0",
     "title": "Whish list"
   },
-  "host": "wish.dev39.ru",
+  "host": "195.24.67.42",
   "basePath": "/api/v1",
   "tags": [
     {
