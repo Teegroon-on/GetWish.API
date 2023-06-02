@@ -39,6 +39,7 @@ class AuthController extends Controller
             $aeroKey = config( 'smsaero.apikey' );
             $sms = 'Ваш код для входа: '.$generatedCode;
             $url = "https://{$aeroLogin}:{$aeroKey}@gate.smsaero.ru/v2/sms/send?number={$request->phone}&text={$sms}&sign=SMS Aero&channel=DIRECT";
+            return response() -> json(file_get_contents( $url ));
             $output = file_get_contents( $url );
             $output = json_decode( $output , 1 );
         }
