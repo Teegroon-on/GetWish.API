@@ -31,6 +31,7 @@ class AuthController extends Controller
         $generatedCode = $sms->generateSmsCode();
         $smsCode = new SmsCode();
         $smsCode->phone = $request->phone;
+        return response() -> json('asd');
         if (config('app.debug')) {
             $smsCode->code = '1234';
         } else {
@@ -41,7 +42,6 @@ class AuthController extends Controller
             $url = "https://{$aeroLogin}:{$aeroKey}@gate.smsaero.ru/v2/sms/send?number={$request->phone}&text={$sms}&sign=SMS Aero&channel=DIRECT";
             $output = file_get_contents( $url );
             $output = json_decode( $output , 1 );
-            return response() -> json($output);
         }
         $smsCode->save();
         return response()->json('', 200);
