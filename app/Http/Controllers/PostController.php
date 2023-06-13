@@ -107,7 +107,11 @@ class PostController extends Controller
             $newPost->save();
             $ext = $this->getFileExtension($request->file('file'));
             if (is_null($ext)) {
-                return response()->json('This file has unreadable extension', 462);
+                $ext = [
+                    'ext' => 'heic',
+                    'mime' => 'image/heic'
+                ];
+                /*return response()->json('This file has unreadable extension', 462);*/
             }
             if (is_null($newPost->uploadAttachment('file', $ext))) {
                 $newPost->delete();
@@ -156,7 +160,7 @@ class PostController extends Controller
      *
      * @param  Illuminate\Http\Request  $request
      * @return JsonResponse|JsonResource
-     */    
+     */
     public function delete(Request $request, $id) {
         $user = $request->user();
         $post = Post::find(intval($id));

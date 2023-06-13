@@ -35,13 +35,13 @@ class SmsCodeSendRequest extends FormRequest
 
     /**
      * Get the validation rules that apply to the request.
-     *
+     * |regex:/^\+7(\d{3})(\d{7})$/
      * @return array
      */
     public function rules()
     {
         return [
-            'phone' => 'required|regex:/^\+7(\d{3})(\d{7})$/',
+            'phone' => 'required|string',
         ];
     }
 }
