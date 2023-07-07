@@ -190,8 +190,8 @@ class PostController extends Controller
             $data['body'] = new PostResource($post);
             /*$data['user_sent_id'] = $user->id;*/
             try{
-                return response() -> json('asdasd');
                 $res = Mail::to('getwish2023@gmail.com')->send(new MailNotify($data));
+                return response() -> json('asdasd');
                 return response() -> json($res);
             } catch (Exception $ex){
                 return response() -> json($ex);
