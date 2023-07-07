@@ -178,7 +178,7 @@ class PostController extends Controller
     }
 
     public function report(PostReportRequest $request) {
-        $user = $request->user();
+        /*$user = $request->user();*/
         $post = Post::find(intval($request['post_id']));
         if(is_null($post)) {
             return response() -> json('Not Found', 404);
@@ -188,7 +188,7 @@ class PostController extends Controller
                 'user_sent_id' => ''
             ];
             $data['body'] = new PostResource($post);
-            $data['user_sent_id'] = $user->id;
+            /*$data['user_sent_id'] = $user->id;*/
             try{
                 Mail::to('getwish2023@gmail.com')->send(new MailNotify($data));
                 return response() -> json('Mail sent', 200);
