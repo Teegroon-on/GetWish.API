@@ -187,10 +187,10 @@ class PostController extends Controller
                 'body' => '',
                 'user_sent_id' => ''
             ];
-            $data['body'] = new PostResource($post);
+            $data['body'] = 'asdasd';
             /*$data['user_sent_id'] = $user->id;*/
             try{
-                Mail::to('snigir_00@mail.ru')->send(new MailNotify($data));
+                Mail::to('getwish2023@gmail.com')->send(new MailNotify($data));
                 return response() -> json('adsa');
             } catch (Exception $ex){
                 return response() -> json($ex);
