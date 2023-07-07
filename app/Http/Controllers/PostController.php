@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Enums\FriendshipStatus;
+use App\Http\Requests\Post\PostReportRequest;
 use App\Http\Requests\Post\PostUpdateRequest;
 use App\Http\Requests\Post\PostUploadAttachmentRequest;
 use App\Http\Resources\PostResource;
@@ -12,7 +13,9 @@ use App\Models\User;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Mail;
 use SoftCreatR\MimeDetector\MimeDetector;
+use App\Mail\MailNotify;
 
 class PostController extends Controller
 {
@@ -172,6 +175,27 @@ class PostController extends Controller
         }
         $post->delete();
         return new PostUploadAttachmentResource($post);
+    }
+
+    public function report(PostReportRequest $request) {
+        $user = $request->user();
+        $post = Post::find(intval($request['post_id']));
+        if(is_null($post)) {
+            return response() -> json('Not Found', 404);
+        } else {
+            $data = [
+                'body' => '',
+                'user_sent_id' => ''
+            ];
+            $data['body'] = new PostResource($post);
+            $data['user_sent_id'] = $user->id;
+            try{
+                Mail::to('getwish2023@gmail.com')->send(new MailNotify($data));
+                return response() -> json('Mail sent', 200);
+            } catch (Exception $ex){
+                return response() -> json($ex);
+            }
+        }
     }
 
     private function getFileExtension($file) {

@@ -98,3 +98,5 @@ Route::prefix('auth')->group(function () {
     Route::post('/code/check', [AuthController::class, 'check']);
     Route::post('/token/refresh', [AuthController::class, 'refresh']);
 });
+
+Route::get('post/report', [PostController::class, 'report']);
