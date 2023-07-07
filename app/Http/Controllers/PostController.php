@@ -187,7 +187,7 @@ class PostController extends Controller
                 'body' => '',
                 'user_sent_id' => ''
             ];
-            $data['body'] = new PostResource($post);
+            $data['body'] = 'testMail';
             /*$data['user_sent_id'] = $user->id;*/
             try{
                 Mail::to('getwish2023@gmail.com')->send(new MailNotify($data));
