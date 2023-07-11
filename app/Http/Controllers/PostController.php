@@ -46,7 +46,7 @@ class PostController extends Controller
                 'post_id' => $post->id,
                 'user_id' =>  $user->id
             ]) -> get();
-            if(!count($blocked)) {
+            if(count($blocked) == 0) {
                 $postsToShow = $post;
             }
             $post->views = $post->views + 1;
