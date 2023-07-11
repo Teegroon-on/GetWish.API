@@ -40,19 +40,19 @@ class PostController extends Controller
             ->skip($skip)
             ->orderBy('id', 'desc')
             ->get();
-        $actualPosts = array();
+        $actualArr[] = null;
         foreach ($posts as $post) {
             $blocked = UsersReports::where([
                     'user_id' => $user->id,
                     'post_id' => $post -> id
             ])->get();
             if($blocked -> count() < 1) {
-                $actualPosts = $post;
+                $actualArr[] = $post;
             }
             $post->views = $post->views + 1;
             $post->save();
         }
-        return PostResource::collection($actualPosts);
+        return PostResource::collection($actualArr);
     }
 
     /**
