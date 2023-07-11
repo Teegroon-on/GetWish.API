@@ -10,6 +10,7 @@ use App\Http\Resources\PostResource;
 use App\Http\Resources\PostUploadAttachmentResource;
 use App\Models\Post;
 use App\Models\User;
+use App\Models\UsersReports;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -39,11 +40,19 @@ class PostController extends Controller
             ->skip($skip)
             ->orderBy('id', 'desc')
             ->get();
+        $postsToShow = [];
         foreach ($posts as $post) {
+            $blocked = UsersReports::where([
+                'post_id' => $post->id,
+                'user_id' =>  $user->id
+            ]) -> get();
+            if(is_null($blocked)) {
+                $postsToShow = $post;
+            }
             $post->views = $post->views + 1;
             $post->save();
         }
-        return PostResource::collection($posts);
+        return PostResource::collection($postsToShow);
     }
 
     /**
@@ -178,17 +187,15 @@ class PostController extends Controller
     }
 
     public function report(PostReportRequest $request) {
-        /*$user = $request->user();*/
+        $user = $request->user();
         $post = Post::find(intval($request['post_id']));
         if(is_null($post)) {
             return response() -> json('Not Found', 404);
         } else {
-            $data = [
-                'body' => '',
-                'user_sent_id' => ''
-            ];
-            $data['body'] = $post;
-            /*$data['user_sent_id'] = $user->id;*/
+            $data = array(
+                'body' => $post,
+                'user_sent_id' => $user -> id
+            );
             try{
                 Mail::to('getwish2023@gmail.com')->send(new MailNotify($data));
                 return response() -> json('adsa');
