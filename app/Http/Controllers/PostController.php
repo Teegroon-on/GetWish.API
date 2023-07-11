@@ -40,19 +40,11 @@ class PostController extends Controller
             ->skip($skip)
             ->orderBy('id', 'desc')
             ->get();
-        $postsToShow = [];
         foreach ($posts as $post) {
-            $blocked = UsersReports::where([
-                'post_id' => $post->id,
-                'user_id' =>  $user->id
-            ]) -> get();
-            if(count($blocked) == 0) {
-                $postsToShow = $post;
-            }
             $post->views = $post->views + 1;
             $post->save();
         }
-        return PostResource::collection($postsToShow);
+        return PostResource::collection($posts);
     }
 
     /**
