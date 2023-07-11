@@ -66,6 +66,7 @@ Route::prefix('post')->middleware('auth:sanctum')->group(function() {
     Route::post('/attachment/upload', [PostController::class, 'uploadAttachment']);
     Route::delete('/comment/{id}', [PostCommentController::class, 'delete']);
     Route::delete('/{id}', [PostController::class, 'delete']);
+    Route::post('/report', [PostController::class, 'report']);
 });
 
 Route::prefix('wishlisttheme')->middleware('auth:sanctum')->group(function() {
@@ -99,4 +100,3 @@ Route::prefix('auth')->group(function () {
     Route::post('/token/refresh', [AuthController::class, 'refresh']);
 });
 
-Route::post('post/report', [PostController::class, 'report']);
