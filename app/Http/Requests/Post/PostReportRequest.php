@@ -24,8 +24,8 @@ class PostReportRequest extends FormRequest
     public function rules()
     {
         return [
-            'post_id' => 'required|string',
-            'report_text' => 'string',
+            'post_id' => 'required|integer',
+            'report_text' => 'required|string',
         ];
     }
 }
