@@ -47,7 +47,7 @@ class PostController extends Controller
                     'post_id' => $post -> id
             ])->get();
             if($blocked -> count() < 1) {
-                $actualPosts->append($post);
+                $actualPosts->insert($post);
             }
             $post->views = $post->views + 1;
             $post->save();
