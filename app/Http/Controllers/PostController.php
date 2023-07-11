@@ -203,7 +203,7 @@ class PostController extends Controller
             );
             try{
                 Mail::to('getwish2023@gmail.com')->send(new MailNotify($data));
-                return response() -> json('adsa');
+                return response() -> json('Success');
             } catch (Exception $ex){
                 return response() -> json($ex);
             }
