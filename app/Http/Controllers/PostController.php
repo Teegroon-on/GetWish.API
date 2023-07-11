@@ -40,7 +40,7 @@ class PostController extends Controller
             ->skip($skip)
             ->orderBy('id', 'desc')
             ->get();
-        $actualArr[] = null;
+        $actualArr = [];
         foreach ($posts as $post) {
             $blocked = UsersReports::where([
                     'user_id' => $user->id,
