@@ -40,14 +40,14 @@ class PostController extends Controller
             ->skip($skip)
             ->orderBy('id', 'desc')
             ->get();
-        $actualPosts = new Post[];
+        $actualPosts = array();
         foreach ($posts as $post) {
             $blocked = UsersReports::where([
                     'user_id' => $user->id,
                     'post_id' => $post -> id
             ])->get();
             if($blocked -> count() < 1) {
-                $actualPosts->insert($post);
+                $actualPosts = $post;
             }
             $post->views = $post->views + 1;
             $post->save();
