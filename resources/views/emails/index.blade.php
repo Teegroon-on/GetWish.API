@@ -14,5 +14,8 @@
     <div>
         {{$data['user_sent_id']}}
     </div>
+    <div>
+        {{$data['report_text']}}
+    </div>
 </body>
 </html>

@@ -192,14 +192,15 @@ class PostController extends Controller
         if(is_null($post)) {
             return response() -> json('Not Found', 404);
         } else {
-            /*$report = new UsersReports();
+            $report = new UsersReports();
             $report->user_id = $user->id;
             $report->reason = $request['report_text'];
             $report->post_id = $post -> id;
-            $report-> save();*/
+            $report-> save();
             $data = array(
                 'body' => $post,
-                'user_sent_id' => $user -> id
+                'user_sent_id' => $user -> id,
+                'report_text' => $request['report_text']
             );
             try{
                 Mail::to('getwish2023@gmail.com')->send(new MailNotify($data));
