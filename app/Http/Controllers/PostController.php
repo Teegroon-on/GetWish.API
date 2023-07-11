@@ -192,6 +192,11 @@ class PostController extends Controller
         if(is_null($post)) {
             return response() -> json('Not Found', 404);
         } else {
+            UsersReports::create([
+               'post_id' => $post -> id,
+               'user_id' => $user -> id,
+               'reason' =>  $request['report_text']
+            ])->save();
             $data = array(
                 'body' => $post,
                 'user_sent_id' => $user -> id
